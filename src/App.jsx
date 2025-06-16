@@ -33,7 +33,7 @@ const App = () => {
   const removeTask = (id) => {
     setTasks(tasks => {
       return tasks.filter(task => {
-        return task.id != id;
+        return task.id !== id;
       });
     });
   };

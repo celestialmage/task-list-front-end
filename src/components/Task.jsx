@@ -1,4 +1,4 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import './Task.css';
@@ -30,7 +30,7 @@ Task.propTypes = {
   title: PropTypes.string.isRequired,
   isComplete: PropTypes.bool.isRequired,
   toggleTask: PropTypes.func.isRequired,
-  removetask: PropTypes.func.isRequired,
+  removeTask: PropTypes.func.isRequired,
 };
 
 export default Task;
