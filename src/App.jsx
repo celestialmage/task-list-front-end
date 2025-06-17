@@ -46,6 +46,12 @@ const App = () => {
       });
   };
 
+  const deleteTaskApi = (id) => {
+    return axios.delete(`${kBaseUrl}/tasks/${id}`)
+      .then(removeTask(id))
+      .catch(console.log);
+  };
+
   const removeTask = (id) => {
     setTasks(tasks => {
       return tasks.filter(task => {
@@ -78,7 +84,7 @@ const App = () => {
         <div>{<TaskList
           tasks={tasks}
           toggleTask={toggleTask}
-          removeTask={removeTask}
+          removeTask={deleteTaskApi}
         />}</div>
       </main>
     </div>
