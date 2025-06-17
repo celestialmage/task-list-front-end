@@ -18,12 +18,12 @@ const kBaseUrl = 'http://127.0.0.1:5000';
 //   },
 // ];
 
-const convertFromApi = ({ id, title, description, is_complete }) => {
+const convertFromApi = ({ id, title, description, is_complete } ) => {
   return { id, title, description, isComplete: is_complete };
 };
 
 const toggleTaskApi = (id, completed) => {
-  return axios.patch(`${kBaseUrl}/task/${id}/${completed ? 'mark_incomplete' : 'mark_complete'}`)
+  return axios.patch(`${kBaseUrl}/tasks/${id}/${completed ? 'mark_incomplete' : 'mark_complete'}`)
     .then(response => response.data.task)
     .then(task => convertFromApi(task))
     .catch(console.log);
@@ -35,12 +35,13 @@ const App = () => {
   const toggleTask = (id, isComplete) => {
     return toggleTaskApi(id, isComplete)
       .then(taskResult => {
-        setTasks(task => {
-          if (task.id === id) {
-            return taskResult;
-          } else {
-            return task;
-          }
+        console.log(taskResult);
+        setTasks(tasks => {
+          return tasks.map(task => {
+            // If the task id matches the one we toggled, return the updated task
+            // Otherwise, return the task unchanged
+            return task.id === id ? taskResult : task;
+          });
         });
       });
   };
