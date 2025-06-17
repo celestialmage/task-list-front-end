@@ -1,22 +1,29 @@
 import TaskList from './components/TaskList.jsx';
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const TASKS = [
-  {
-    id: 1,
-    title: 'Mow the lawn',
-    isComplete: false,
-  },
-  {
-    id: 2,
-    title: 'Cook Pasta',
-    isComplete: true,
-  },
-];
+const kBaseUrl = 'http://127.0.0.1:5000';
+
+// const TASKS = [
+//   {
+//     id: 1,
+//     title: 'Mow the lawn',
+//     isComplete: false,
+//   },
+//   {
+//     id: 2,
+//     title: 'Cook Pasta',
+//     isComplete: true,
+//   },
+// ];
+
+const convertFromApi = ({ id, title, description, is_complete }) => {
+  return { id, title, description, isComplete: is_complete };
+};
 
 const App = () => {
-  const [tasks, setTasks] = useState(TASKS);
+  const [tasks, setTasks] = useState([]);
 
   const toggleTask = (id) => {
     setTasks(tasks => {
@@ -37,6 +44,21 @@ const App = () => {
       });
     });
   };
+
+  const getTasks = () => {
+    return axios.get(`${kBaseUrl}/tasks`)
+      .then(response => response.data.map(task => {
+        return convertFromApi(task);
+      }))
+      .then(setTasks)
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getTasks();
+  }, []);
 
   return (
     <div className="App">
