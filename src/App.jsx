@@ -22,19 +22,27 @@ const convertFromApi = ({ id, title, description, is_complete }) => {
   return { id, title, description, isComplete: is_complete };
 };
 
+const toggleTaskApi = (id, completed) => {
+  return axios.patch(`${kBaseUrl}/task/${id}/${completed ? 'mark_incomplete' : 'mark_complete'}`)
+    .then(response => response.data.task)
+    .then(task => convertFromApi(task))
+    .catch(console.log);
+};
+
 const App = () => {
   const [tasks, setTasks] = useState([]);
 
-  const toggleTask = (id) => {
-    setTasks(tasks => {
-      return tasks.map(task => {
-        if (task.id === id) {
-          return {...task, isComplete: !task.isComplete};
-        }else {
-          return task;
-        }
+  const toggleTask = (id, isComplete) => {
+    return toggleTaskApi(id, isComplete)
+      .then(taskResult => {
+        setTasks(task => {
+          if (task.id === id) {
+            return taskResult;
+          } else {
+            return task;
+          }
+        });
       });
-    });
   };
 
   const removeTask = (id) => {
