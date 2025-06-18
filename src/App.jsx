@@ -1,32 +1,21 @@
 import TaskList from './components/TaskList.jsx';
+import NewTaskForm from './components/NewTaskForm.jsx';
 import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const kBaseUrl = 'http://127.0.0.1:5000';
 
-// const TASKS = [
-//   {
-//     id: 1,
-//     title: 'Mow the lawn',
-//     isComplete: false,
-//   },
-//   {
-//     id: 2,
-//     title: 'Cook Pasta',
-//     isComplete: true,
-//   },
-// ];
-
 const convertFromApi = ({ id, title, description, is_complete } ) => {
   return { id, title, description, isComplete: is_complete };
 };
 
 const toggleTaskApi = (id, completed) => {
-  return axios.patch(`${kBaseUrl}/tasks/${id}/${completed ? 'mark_incomplete' : 'mark_complete'}`)
+  const path = completed ? 'mark_incomplete' : 'mark_complete';
+  return axios.patch(`${kBaseUrl}/tasks/${id}/${path}`)
     .then(response => response.data.task)
     .then(task => convertFromApi(task))
-    .catch(console.log);
+    .catch(error => console.log(error));
 };
 
 const App = () => {
@@ -35,7 +24,7 @@ const App = () => {
   const toggleTask = (id, isComplete) => {
     return toggleTaskApi(id, isComplete)
       .then(taskResult => {
-        console.log(taskResult);
+        //console.log(taskResult);
         setTasks(tasks => {
           return tasks.map(task => {
             // If the task id matches the one we toggled, return the updated task
@@ -48,16 +37,14 @@ const App = () => {
 
   const deleteTaskApi = (id) => {
     return axios.delete(`${kBaseUrl}/tasks/${id}`)
-      .then(removeTask(id))
-      .catch(console.log);
+      .catch(error => console.log(error));
   };
 
   const removeTask = (id) => {
-    setTasks(tasks => {
-      return tasks.filter(task => {
-        return task.id !== id;
-      });
-    });
+    return deleteTaskApi(id)
+      .then(
+        setTasks(tasks => tasks.filter(task => task.id !== id))
+      );
   };
 
   const getTasks = () => {
@@ -81,11 +68,14 @@ const App = () => {
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
-        <div>{<TaskList
-          tasks={tasks}
-          toggleTask={toggleTask}
-          removeTask={deleteTaskApi}
-        />}</div>
+        <div>
+          <TaskList
+            tasks={tasks}
+            toggleTask={toggleTask}
+            removeTask={removeTask}
+          />
+        </div>
+        <NewTaskForm />
       </main>
     </div>
   );
