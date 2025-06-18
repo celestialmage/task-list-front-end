@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
+import './NewTaskForm.css';
 
-const NewTaskForm = () => {
+const NewTaskForm = ({ onPostTask }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const handleChange = (event) => {
@@ -10,27 +12,49 @@ const NewTaskForm = () => {
       setDescription(event.target.value);
     }
   };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const newTaskData = {
+      title,
+      description,
+    };
+    onPostTask(newTaskData);
+    setTitle('');
+    setDescription('');
+  };
   return (
-    <section>
-      <h2> Add a new task</h2>
-      <form>
-        <div>
-          <label htmlFor="task-title">Task title:</label>
-          <input id="task-title" type="text" name="title" value={title} onChange={handleChange}></input>
-        </div>
-        <div>
-          <label htmlFor="input-task">Task description:</label>
+    <section className="new-task-section">
+      <h2>Add a new task</h2>
+      <form className="new-task-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label className="form-label" htmlFor="task-title">Task title:</label>
           <input
+            className="form-input"
+            id="task-title"
+            type="text"
+            name="title"
+            value={title}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label className="form-label" htmlFor="task-description">Task description:</label>
+          <input
+            className="form-input"
             id="task-description"
             type="text"
             name="description"
             value={description}
             onChange={handleChange}
-          ></input>
+          />
         </div>
+        <button className="form-button" type="submit">Add a new Task</button>
       </form>
     </section>
   );
 };
 
+NewTaskForm.propTypes = {
+  onPostTask: PropTypes.func.isRequired,
+};
 export default NewTaskForm;

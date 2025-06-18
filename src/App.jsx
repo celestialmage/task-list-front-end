@@ -6,58 +6,73 @@ import axios from 'axios';
 
 const kBaseUrl = 'http://127.0.0.1:5000';
 
-const convertFromApi = ({ id, title, description, is_complete } ) => {
+const convertFromApi = ({ id, title, description, is_complete }) => {
   return { id, title, description, isComplete: is_complete };
+};
+
+//define helper: post a new task to backend, return a new converted task in json
+const postTaskApi = (newTaskData) => {
+  return axios
+    .post(`${kBaseUrl}/tasks`, newTaskData)
+    .then((response) => convertFromApi(response.data.task))
+    .catch((error) => console.log(error));
 };
 
 const toggleTaskApi = (id, completed) => {
   const path = completed ? 'mark_incomplete' : 'mark_complete';
-  return axios.patch(`${kBaseUrl}/tasks/${id}/${path}`)
-    .then(response => response.data.task)
-    .then(task => convertFromApi(task))
-    .catch(error => console.log(error));
+  return axios
+    .patch(`${kBaseUrl}/tasks/${id}/${path}`)
+    .then((response) => response.data.task)
+    .then((task) => convertFromApi(task))
+    .catch((error) => console.log(error));
 };
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
 
   const toggleTask = (id, isComplete) => {
-    return toggleTaskApi(id, isComplete)
-      .then(taskResult => {
-        //console.log(taskResult);
-        setTasks(tasks => {
-          return tasks.map(task => {
-            // If the task id matches the one we toggled, return the updated task
-            // Otherwise, return the task unchanged
-            return task.id === id ? taskResult : task;
-          });
+    return toggleTaskApi(id, isComplete).then((taskResult) => {
+      //console.log(taskResult);
+      setTasks((tasks) => {
+        return tasks.map((task) => {
+          // If the task id matches the one we toggled, return the updated task
+          // Otherwise, return the task unchanged
+          return task.id === id ? taskResult : task;
         });
       });
+    });
   };
 
   const deleteTaskApi = (id) => {
-    return axios.delete(`${kBaseUrl}/tasks/${id}`)
-      .catch(error => console.log(error));
+    return axios
+      .delete(`${kBaseUrl}/tasks/${id}`)
+      .catch((error) => console.log(error));
   };
 
   const removeTask = (id) => {
-    return deleteTaskApi(id)
-      .then(
-        setTasks(tasks => tasks.filter(task => task.id !== id))
-      );
+    return deleteTaskApi(id).then(
+      setTasks((tasks) => tasks.filter((task) => task.id !== id))
+    );
   };
 
   const getTasks = () => {
-    return axios.get(`${kBaseUrl}/tasks`)
-      .then(response => response.data.map(task => {
-        return convertFromApi(task);
-      }))
+    return axios
+      .get(`${kBaseUrl}/tasks`)
+      .then((response) =>
+        response.data.map((task) => {
+          return convertFromApi(task);
+        })
+      )
       .then(setTasks)
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
-
+  const postTask = (newTaskData) => {
+    return postTaskApi(newTaskData).then((newTask) => {
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+    });
+  };
   useEffect(() => {
     getTasks();
   }, []);
@@ -75,7 +90,7 @@ const App = () => {
             removeTask={removeTask}
           />
         </div>
-        <NewTaskForm />
+        <NewTaskForm onPostTask={postTask}/>
       </main>
     </div>
   );
