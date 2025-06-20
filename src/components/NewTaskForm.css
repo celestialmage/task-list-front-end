@@ -1,20 +1,34 @@
 .new-task-section {
   margin-top: 50px;
+  background-color: lightgray;
+  width: 40%;
+  align-self: center;
+  padding-top: 1em;
+  padding-bottom: 1em;  
 }
+
 .new-task-form {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  min-height: 100px;
+  min-height: 150px;
   
 }
 
 .form-button {
-  border-radius: 2px;
-  background-color: lightblue;
+  border-radius: 2em;
+  background-color: lightcoral;
   ;
   width: 10em;
+  height: 3em;
+}
 
+.new-task-form label {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+.new-task-form input {
+  margin-left: 1em;
 }
